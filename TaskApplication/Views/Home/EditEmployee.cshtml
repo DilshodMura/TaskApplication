@@ -1,0 +1,81 @@
+﻿@model EmployeeViewModel
+
+<h2>Edit Employee</h2>
+
+<form asp-action="SaveEmployeeChanges" method="post" id="editEmployeeForm">
+    <div class="form-group">
+        <label asp-for="Payroll_Number">Payroll number:</label>
+        <input asp-for="Payroll_Number" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="Forenames">First Name:</label>
+        <input asp-for="Forenames" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Surname">Last Name:</label>
+        <input asp-for="Surname" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Date_of_Birth">Date of Birth:</label>
+        <input asp-for="Date_of_Birth" type="date" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Telephone">Telephone:</label>
+        <input asp-for="Telephone" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Mobile">Mobile:</label>
+        <input asp-for="Mobile" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address">Address:</label>
+        <input asp-for="Address" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address_2">Address 2:</label>
+        <input asp-for="Address_2" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Postcode">Postcode:</label>
+        <input asp-for="Postcode" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EMail_Home">Email Home:</label>
+        <input asp-for="EMail_Home" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Start_Date">Start Date:</label>
+        <input asp-for="Start_Date" type="date" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+<script>
+    // Populate the form fields with employee data
+    $(document).ready(function () {
+        var employeeData = @Html.Raw(Json.Serialize(Model));
+
+        // Populate the form fields
+        $('#Payroll_Number').val(employeeData.Payroll_Number);
+        $('#Forenames').val(employeeData.Forenames);
+        $('#Surname').val(employeeData.Surname);
+        $('#Date_of_Birth').val(employeeData.Date_of_Birth);
+        $('#Telephone').val(employeeData.Telephone);
+        $('#Mobile').val(employeeData.Mobile);
+        $('#Address').val(employeeData.Address);
+        $('#Address_2').val(employeeData.Address_2);
+        $('#Postcode').val(employeeData.Postcode);
+        $('#EMail_Home').val(employeeData.EMail_Home);
+        $('#Start_Date').val(employeeData.Start_Date);
+    });
+</script>

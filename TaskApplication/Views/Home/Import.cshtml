@@ -1,0 +1,143 @@
+﻿@model IEnumerable<EmployeeViewModel>
+
+@{
+    ViewData["Title"] = "Employee Import";
+}
+
+<h2>Employee Import</h2>
+
+@using (Html.BeginForm("ImportEmployees", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="form-group">
+        <label for="file">Select a CSV File:</label>
+        <input type="file" name="file" id="file" accept=".csv" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Import</button>
+}
+
+<br />
+<br />
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (Model != null && Model.Any())
+{
+    <h3>Imported Employees</h3>
+    <p>Total Rows Added: @Model.Count()</p>
+
+    <table id="employeeTable" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Payroll_Number</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>Telephone</th>
+                <th>Mobile</th>
+                <th>Address</th>
+                <th>Address 2</th>
+                <th>Postcode</th>
+                <th>Email Home</th>
+                <th>Start Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in Model)
+            {
+                <tr>
+                    <td>@employee.Payroll_Number</td>
+                    <td>@employee.Forenames</td>
+                    <td>@employee.Surname</td>
+                    <td>@employee.Date_of_Birth.ToShortDateString()</td>
+                    <td>@employee.Telephone</td>
+                    <td>@employee.Mobile</td>
+                    <td>@employee.Address</td>
+                    <td>@employee.Address_2</td>
+                    <td>@employee.Postcode</td>
+                    <td>@employee.EMail_Home</td>
+                    <td>@employee.Start_Date.ToShortDateString()</td>
+                    <td>
+                        <a href="#" class="edit-employee" data-id="@employee.Payroll_Number">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Edit Employee Modal -->
+<div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Display the editing form here -->
+                <div id="editEmployeeFormContainer"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveEmployeeChanges">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include DataTables CSS and JS files -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.10/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.11.10/js/jquery.dataTables.min.js"></script>
+
+<!-- Initialize DataTables with sorting and searching -->
+<script>
+    $(document).ready(function () {
+        $('#employeeTable').DataTable({
+            "paging": false, // Disable paging for now, you can enable it if needed
+            "ordering": true, // Enable sorting
+            "searching": true // Enable searching
+        });
+
+        // Add click event handler for edit links/buttons
+        $('#employeeTable').on('click', '.edit-employee', function () {
+            var employeeId = $(this).data('id');
+            openEditModal(employeeId);
+        });
+
+        function openEditModal(employeeId) {
+            // Prevent the default link behavior
+            event.preventDefault();
+
+            $.ajax({
+                url: '/Home/GetEmployeeById', // Update the URL to match your controller action
+                method: 'GET',
+                data: { employeeId: employeeId },
+                success: function (data) {
+                    // Display the editing form in the modal
+                    $('#editEmployeeFormContainer').html(data);
+
+                    // Bind the "Save changes" button to a function to handle form submission
+                    $('#saveEmployeeChanges').click(function () {
+                        // Get the form data and submit it using AJAX to save changes
+                        var formData = $('#editEmployeeForm').serialize();
+                        saveEmployeeChanges(formData);
+                    });
+
+                    $('#editEmployeeModal').modal('show');
+                },
+                error: function () {
+                    alert('Error loading employee data.');
+                }
+            });
+        }
+    });
+</script>
