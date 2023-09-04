@@ -3,7 +3,8 @@ namespace TaskApplication.Models
 {
     public class EmployeeViewModel
     {
-        public int Payroll_Number { get; set; }
+        public int Id { get; set; } 
+        public string Payroll_Number { get; set; }
 
         public string Forenames { get; set; }
 

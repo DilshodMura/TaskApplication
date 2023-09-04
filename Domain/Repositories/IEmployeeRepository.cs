@@ -7,5 +7,6 @@ namespace Domain.Repositories
     {
         Task AddEmployeesAsync(List<IEmployee> employees);
         Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync();
+        public Task<IEmployee> GetEmployeeByIdAsync(int employeeId);
     }
 }

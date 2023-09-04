@@ -25,6 +25,8 @@ namespace Service.Services
             using (var reader = new StreamReader(stream))
             using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
             {
+                csv.Context.RegisterClassMap<EmployeeServiceModelMap>(); // Register the custom class map
+
                 // Parse CSV records
                 var records = csv.GetRecords<EmployeeServiceModel>().ToList();
 
@@ -58,5 +60,12 @@ namespace Service.Services
         {
             return await _employeeRepository.GetImportedEmployeesAsync();
         }
+
+        public async Task<IEmployee> GetEmployeeByIdAsync(int employeeId)
+        {
+            // Call the repository to get the employee by ID
+            return await _employeeRepository.GetEmployeeByIdAsync(employeeId);
+        }
+
     }
 }

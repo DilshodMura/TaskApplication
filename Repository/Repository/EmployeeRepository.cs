@@ -35,12 +35,9 @@ namespace Repository.Repository
         {
             var employeeEntity = await _dbContext.Employees.FindAsync(employeeId);
 
-            if (employeeEntity == null)
-            {
-                throw new Exception($"Employee with ID {employeeId} not found.");
-            }
-
-            return _mapper.Map<IEmployee>(employeeEntity);
+            return employeeEntity == null
+                ? throw new Exception($"Employee with ID {employeeId} not found.")
+                : _mapper.Map<IEmployee>(employeeEntity);
         }
         public async Task UpdateEmployeeAsync(IEmployee employee)
         {
@@ -51,11 +48,9 @@ namespace Repository.Repository
                 throw new Exception($"Employee with ID {employee.Id} not found for update.");
             }
 
-            // Map properties from IEmployee to EmployeeDb
             _mapper.Map(employee, employeeEntity);
 
             await _dbContext.SaveChangesAsync();
         }
-
     }
 }

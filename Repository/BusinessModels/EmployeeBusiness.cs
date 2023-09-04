@@ -5,7 +5,7 @@ namespace Repository.BusinessModels
     public class EmployeeBusiness : IEmployee
     {
         public int Id { get; set; }
-        public int Payroll_Number { get; set; }
+        public string Payroll_Number { get; set; }
         public string Forenames { get; set; }
         public string Surname { get; set; }
         public DateTime Date_of_Birth { get; set; }

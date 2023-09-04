@@ -28,15 +28,17 @@
 
 @if (Model != null && Model.Any())
 {
+    <!-- Your table with imported employees -->
+
     <h3>Imported Employees</h3>
     <p>Total Rows Added: @Model.Count()</p>
 
     <table id="employeeTable" class="table table-bordered">
         <thead>
             <tr>
-                <th>Payroll_Number</th>
-                <th>First Name</th>
-                <th>Last Name</th>
+                <th>Payroll Number</th>
+                <th>Forenames</th>
+                <th>Surname</th>
                 <th>Date of Birth</th>
                 <th>Telephone</th>
                 <th>Mobile</th>
@@ -64,7 +66,7 @@
                     <td>@employee.EMail_Home</td>
                     <td>@employee.Start_Date.ToShortDateString()</td>
                     <td>
-                        <a href="#" class="edit-employee" data-id="@employee.Payroll_Number">Edit</a>
+                        <a href="#" class="edit-employee" data-id="@employee.Id">Edit</a>
                     </td>
                 </tr>
             }
@@ -83,61 +85,58 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Display the editing form here -->
-                <div id="editEmployeeFormContainer"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveEmployeeChanges">Save changes</button>
+                <!-- Form for editing employee data -->
+                <form id="editEmployeeForm">
+                    <!-- Add form fields for editing employee data here -->
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Include DataTables CSS and JS files -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.10/css/jquery.dataTables.min.css">
-<script src="https://cdn.datatables.net/1.11.10/js/jquery.dataTables.min.js"></script>
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+    <script defer src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
-<!-- Initialize DataTables with sorting and searching -->
-<script>
-    $(document).ready(function () {
-        $('#employeeTable').DataTable({
-            "paging": false, // Disable paging for now, you can enable it if needed
-            "ordering": true, // Enable sorting
-            "searching": true // Enable searching
-        });
-
-        // Add click event handler for edit links/buttons
-        $('#employeeTable').on('click', '.edit-employee', function () {
-            var employeeId = $(this).data('id');
-            openEditModal(employeeId);
-        });
-
-        function openEditModal(employeeId) {
-            // Prevent the default link behavior
-            event.preventDefault();
-
-            $.ajax({
-                url: '/Home/GetEmployeeById', // Update the URL to match your controller action
-                method: 'GET',
-                data: { employeeId: employeeId },
-                success: function (data) {
-                    // Display the editing form in the modal
-                    $('#editEmployeeFormContainer').html(data);
-
-                    // Bind the "Save changes" button to a function to handle form submission
-                    $('#saveEmployeeChanges').click(function () {
-                        // Get the form data and submit it using AJAX to save changes
-                        var formData = $('#editEmployeeForm').serialize();
-                        saveEmployeeChanges(formData);
-                    });
-
-                    $('#editEmployeeModal').modal('show');
-                },
-                error: function () {
-                    alert('Error loading employee data.');
-                }
+    <script>
+        var $ = jQuery.noConflict();
+        $(document).ready(function () {
+            // Initialize DataTables
+            var dataTable = $('#employeeTable').DataTable({
+                "paging": false,
+                "ordering": true,
+                "searching": true
             });
-        }
-    });
-</script>
+
+            // Event handler for "Edit" buttons
+            $('#employeeTable').on('click', '.edit-employee', function (e) {
+                e.preventDefault(); // Prevent the default link behavior
+                var employeeId = $(this).data('id');
+                openEditModal(employeeId);
+            });
+
+            function openEditModal(employeeId) {
+                // Send an Ajax request to retrieve employee data
+                $.ajax({
+                    url: '/Home/GetEmployeeById',
+                    method: 'GET',
+                    data: { employeeId: employeeId },
+                    success: function (data) {
+                        $('#editEmployeeForm').html(data);
+                        $('#editEmployeeModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert('Error loading employee data. See console for details.');
+                    }
+                });
+            }
+
+            // Add event handler for saving changes
+            $('#saveEmployeeChanges').click(function () {
+                // Add your code to handle form submission and saving changes
+            });
+        });
+    </script>
+}
