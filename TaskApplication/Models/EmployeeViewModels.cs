@@ -1,6 +1,4 @@
 ﻿
-using Domain.Models;
-
 namespace TaskApplication.Models
 {
     public class EmployeeViewModel

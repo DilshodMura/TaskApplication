@@ -6,7 +6,7 @@
 
 <h2>Employee Import</h2>
 
-@using (Html.BeginForm("ImportEmployees", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("ImportCsv", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <div class="form-group">
         <label for="file">Select a CSV File:</label>

@@ -3,11 +3,13 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Domain.Models;
 using Domain.Repositories;
+using Domain.Services;
+using Service.ServiceModels;
 using System.Globalization;
 
 namespace Service.Services
 {
-    public class EmployeeService
+    public class EmployeeService:IEmployeeService
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
@@ -17,13 +19,14 @@ namespace Service.Services
             _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-        public async Task<IEnumerable<IEmployee>> ParseCsvFile(Stream stream)
+
+        private async Task<IEnumerable<IEmployee>> ParseCsvFile(Stream stream)
         {
             using (var reader = new StreamReader(stream))
             using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
             {
                 // Parse CSV records
-                var records = csv.GetRecords<EmployeeService>().ToList();
+                var records = csv.GetRecords<EmployeeServiceModel>().ToList();
 
                 // Map CSV records to IEmployee objects using AutoMapper
                 var employees = _mapper.Map<List<IEmployee>>(records);
@@ -32,12 +35,24 @@ namespace Service.Services
             }
         }
 
-        public async Task ImportEmployeesFromCsvAsync(Stream stream)
+        public async Task<IEnumerable<IEmployee>> ImportEmployeesFromCsvAsync(Stream stream)
         {
-            var employees = await ParseCsvFile(stream);
+            try
+            {
+                var employees = await ParseCsvFile(stream);
 
-            await _employeeRepository.AddEmployeesAsync(employees.ToList());
+                var employeeDbList = _mapper.Map<List<IEmployee>>(employees);
+
+                await _employeeRepository.AddEmployeesAsync(employeeDbList);
+
+                return employeeDbList.Select(employee => _mapper.Map<EmployeeServiceModel>(employee));
+            }
+            catch (Exception ex)
+            {
+                return Enumerable.Empty<EmployeeServiceModel>();
+            }
         }
+
 
         public async Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync()
         {

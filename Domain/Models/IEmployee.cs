@@ -3,6 +3,7 @@ namespace Domain.Models
 {
     public interface IEmployee
     {
+        public int Id { get; set; }
         public int Payroll_Number { get; set; }
         public string Forenames { get; set; }
         public string Surname { get; set; }

@@ -38,7 +38,7 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Date_of_Birth")
+                    b.Property<DateTime>("Date_of_Birth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EMail_Home")
@@ -60,7 +60,7 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Start_Date")
+                    b.Property<DateTime>("Start_Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Surname")

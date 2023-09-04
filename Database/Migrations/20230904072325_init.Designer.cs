@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230902164924_Init")]
-    partial class Init
+    [Migration("20230904072325_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,7 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Date_of_Birth")
+                    b.Property<DateTime>("Date_of_Birth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EMail_Home")
@@ -63,7 +63,7 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Start_Date")
+                    b.Property<DateTime>("Start_Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Surname")

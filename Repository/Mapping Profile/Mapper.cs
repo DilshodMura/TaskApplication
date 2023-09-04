@@ -10,10 +10,9 @@ namespace Repository.Mapping_Profile
     {
         public MappingProfile()
         {
-            //Mapper profiles for db, business and service models.
             CreateMap<IEmployee, EmployeeDb>();
             CreateMap<EmployeeDb, EmployeeBusiness>();
-            CreateMap<EmployeeService, EmployeeBusiness>();
+            CreateMap<EmployeeServiceModel, EmployeeBusiness>();
         }
     }
 }
