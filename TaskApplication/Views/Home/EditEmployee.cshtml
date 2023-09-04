@@ -57,27 +57,10 @@
         <input asp-for="Start_Date" type="date" class="form-control" />
     </div>
 
+    <div class="form-group">
+        <!-- Add a hidden field for the employee ID -->
+        <input asp-for="Id" type="hidden" id="EmployeeId" />
+    </div>
+
     <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
-
-<script>
-    // Populate the form fields with employee data
-    $(document).ready(function () {
-        // Get the employee data element
-        var employeeData = $('#employeeData');
-
-        // Populate the form fields
-        $('#Payroll_Number').val(employeeData.data('Payroll_Number'));
-        $('#Forenames').val(employeeData.data('Forenames'));
-        $('#Surname').val(employeeData.data('Surname'));
-        $('#Date_of_Birth').val(employeeData.data('Date_of_Birth'));
-        $('#Telephone').val(employeeData.data('Telephone'));
-        $('#Mobile').val(employeeData.data('Mobile'));
-        $('#Address').val(employeeData.data('Address'));
-        $('#Address_2').val(employeeData.data('Address_2'));
-        $('#Postcode').val(employeeData.data('Postcode'));
-        $('#EMail_Home').val(employeeData.data('EMail_Home'));
-        $('#Start_Date').val(employeeData.data('Start_Date'));
-    });
-</script>
-

@@ -28,8 +28,6 @@
 
 @if (Model != null && Model.Any())
 {
-    <!-- Your table with imported employees -->
-
     <h3>Imported Employees</h3>
     <p>Total Rows Added: @Model.Count()</p>
 
@@ -66,6 +64,7 @@
                     <td>@employee.EMail_Home</td>
                     <td>@employee.Start_Date.ToShortDateString()</td>
                     <td>
+                        @employee.Id
                         <a href="#" class="edit-employee" data-id="@employee.Id">Edit</a>
                     </td>
                 </tr>
@@ -95,6 +94,7 @@
 </div>
 
 @section scripts {
+    <!-- JavaScript and jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
     <script defer src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
@@ -112,30 +112,61 @@
             // Event handler for "Edit" buttons
             $('#employeeTable').on('click', '.edit-employee', function (e) {
                 e.preventDefault(); // Prevent the default link behavior
+                console.log("Before: Data-id value: " + $(this).data('id'));
                 var employeeId = $(this).data('id');
+                console.log("After: employeeId value: " + employeeId);
                 openEditModal(employeeId);
             });
 
             function openEditModal(employeeId) {
-                // Send an Ajax request to retrieve employee data
+                console.log(employeeId);
+                if (employeeId) {
+                    // Send an Ajax request to retrieve employee data with the employeeId in the URL
+                    $.ajax({
+                        url: `/Home/GetEmployeeById?employeeId=${employeeId}`,
+                        method: 'GET',
+                        success: function (data) {
+                            // Populate the edit form with the retrieved data
+                            $('#editEmployeeForm').html(data);
+                            $('#editEmployeeModal').modal('show');
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText);
+                            alert('Error loading employee data. See console for details.');
+                        }
+                    });
+                } else {
+                    console.error("Invalid employeeId");
+                }
+            }
+
+            // Event handler for saving changes
+            $('#editEmployeeForm').on('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Serialize the form data
+                var formData = $(this).serialize();
+
+                // Send an Ajax request to save the changes
                 $.ajax({
-                    url: '/Home/GetEmployeeById',
-                    method: 'GET',
-                    data: { employeeId: employeeId },
-                    success: function (data) {
-                        $('#editEmployeeForm').html(data);
-                        $('#editEmployeeModal').modal('show');
+                    url: '/Home/SaveEmployeeChanges',
+                    method: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            // Close the modal and update the table if the save was successful
+                            $('#editEmployeeModal').modal('hide');
+                            // You may also want to refresh the employee table here
+                        } else {
+                            // Handle errors or display error messages
+                            console.error(response.message);
+                        }
                     },
                     error: function (xhr, status, error) {
                         console.error(xhr.responseText);
-                        alert('Error loading employee data. See console for details.');
+                        alert('Error saving employee changes. See console for details.');
                     }
                 });
-            }
-
-            // Add event handler for saving changes
-            $('#saveEmployeeChanges').click(function () {
-                // Add your code to handle form submission and saving changes
             });
         });
     </script>

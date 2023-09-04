@@ -51,10 +51,11 @@ namespace TaskApplication.Controllers
                             IMapper mapper = config.CreateMapper();
 
                             // Map the imported employees to EmployeeViewModel using the specific mapper
-                            var employeeViewModels = mapper.Map<List<EmployeeViewModel>>(importedEmployees);
+                            //var employeeViewModels = mapper.Map<List<EmployeeViewModel>>(importedEmployees);
+                            var employeeViewModels = GetImportedEmployees();
 
                             // Display a success message and pass the EmployeeViewModels to the view
-                            TempData["SuccessMessage"] = $"Import successful! {employeeViewModels.Count} rows processed.";
+                            TempData["SuccessMessage"] = $"Import successful! {employeeViewModels} rows processed.";
                             return View("Import", employeeViewModels);
                         }
                         else
@@ -81,9 +82,13 @@ namespace TaskApplication.Controllers
         {
             try
             {
+                // Retrieve employees from the database
                 var employees = await _service.GetImportedEmployeesAsync();
 
+                // Map the employees to EmployeeViewModel using AutoMapper
                 var employeeViewModels = _mapper.Map<List<EmployeeViewModel>>(employees);
+
+                // Pass the mapped data to the view
                 return View(employeeViewModels);
             }
             catch (Exception ex)

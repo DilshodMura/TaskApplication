@@ -4,6 +4,7 @@ using Database.Entities;
 using Domain.Models;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Repository.BusinessModels;
 
 namespace Repository.Repository
 {
@@ -28,7 +29,7 @@ namespace Repository.Repository
         public async Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync()
         {
             var employeeEntities = await _dbContext.Employees.ToListAsync();
-            return _mapper.Map<List<IEmployee>>(employeeEntities);
+            return _mapper.Map<List<EmployeeBusiness>>(employeeEntities);
         }
 
         public async Task<IEmployee> GetEmployeeByIdAsync(int employeeId)
