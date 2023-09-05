@@ -45,27 +45,33 @@ namespace Service.Services
 
                 var employeeDbList = _mapper.Map<List<IEmployee>>(employees);
 
+                int count = employeeDbList.Count();
+
                 await _employeeRepository.AddEmployeesAsync(employeeDbList);
 
-                return employeeDbList.Select(employee => _mapper.Map<EmployeeServiceModel>(employee));
+                // Call the modified GetImportedEmployeesAsync method with the count.
+                return await GetImportedEmployeesAsync(count);
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<EmployeeServiceModel>();
+                Console.WriteLine("test");
+                return null;
             }
         }
 
-
-        public async Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync()
+        public async Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync(int count)
         {
-            return await _employeeRepository.GetImportedEmployeesAsync();
+            return await _employeeRepository.GetImportedEmployeesAsync(count);
         }
 
         public async Task<IEmployee> GetEmployeeByIdAsync(int employeeId)
         {
-            // Call the repository to get the employee by ID
             return await _employeeRepository.GetEmployeeByIdAsync(employeeId);
         }
 
+        public async Task UpdateEmployeeAsync(IEmployee updatedEmployee)
+        {
+            await _employeeRepository.UpdateEmployeeAsync(updatedEmployee);
+        }
     }
 }

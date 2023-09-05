@@ -5,6 +5,7 @@ using Domain.Models;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Repository.BusinessModels;
+using Service.ServiceModels;
 
 namespace Repository.Repository
 {
@@ -26,9 +27,13 @@ namespace Repository.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync()
+        public async Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync(int count)
         {
-            var employeeEntities = await _dbContext.Employees.ToListAsync();
+            var employeeEntities = await _dbContext.Employees
+                .OrderBy(e => e.Id) // Assuming there's an "Id" property that represents the order
+                .Skip(Math.Max(0, await _dbContext.Employees.CountAsync() - count)) // Skip all but the last two
+                .ToListAsync();
+
             return _mapper.Map<List<EmployeeBusiness>>(employeeEntities);
         }
 
@@ -38,19 +43,20 @@ namespace Repository.Repository
 
             return employeeEntity == null
                 ? throw new Exception($"Employee with ID {employeeId} not found.")
-                : _mapper.Map<IEmployee>(employeeEntity);
+                : _mapper.Map<EmployeeBusiness>(employeeEntity);
         }
-        public async Task UpdateEmployeeAsync(IEmployee employee)
+        public async Task UpdateEmployeeAsync(IEmployee updatedEmployee)
         {
-            var employeeEntity = await _dbContext.Employees.FindAsync(employee.Id);
+            // Instead of creating a new instance, work with the existing tracked entity
+            var entry = _dbContext.Entry(updatedEmployee);
 
-            if (employeeEntity == null)
+            if (entry.State == EntityState.Detached)
             {
-                throw new Exception($"Employee with ID {employee.Id} not found for update.");
+                // This condition should not be necessary, but you can keep it for extra safety
+                _dbContext.Attach(updatedEmployee);
             }
 
-            _mapper.Map(employee, employeeEntity);
-
+            // The entity is already tracked, so there's no need to update it explicitly
             await _dbContext.SaveChangesAsync();
         }
     }

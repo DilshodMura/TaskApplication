@@ -3,9 +3,12 @@ using Database.DbContexts;
 using Domain.Repositories;
 using Domain.Services;
 using Microsoft.EntityFrameworkCore;
+using Repository.BusinessModels;
 using Repository.Mapping_Profile;
 using Repository.Repository;
+using Service.ServiceModels;
 using Service.Services;
+using TaskApplication.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,7 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 var mapperConfig = new MapperConfiguration(config =>
 {
     config.AddProfile<MappingProfile>();
+    config.CreateMap<EmployeeViewModel, EmployeeBusiness>();
 });
 
 var mapper = mapperConfig.CreateMapper();

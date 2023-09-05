@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using Domain.Models;
 using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
+using Repository.BusinessModels;
 using Service.ServiceModels;
+using Service.Services;
 using TaskApplication.Models;
 
 namespace TaskApplication.Controllers
@@ -35,26 +38,19 @@ namespace TaskApplication.Controllers
                 {
                     using (var stream = file.OpenReadStream())
                     {
-                        // Perform the CSV import and get the list of imported employees
                         var importedEmployees = await _service.ImportEmployeesFromCsvAsync(stream);
 
-                        // Check if any employees were imported
                         if (importedEmployees.Any())
                         {
-                            // Configure AutoMapper for EmployeeServiceModel to EmployeeViewModel mapping
                             var config = new MapperConfiguration(cfg =>
                             {
-                                cfg.CreateMap<EmployeeServiceModel, EmployeeViewModel>();
+                                cfg.CreateMap<EmployeeBusiness, EmployeeViewModel>();
                             });
 
-                            // Create an IMapper instance using the configured mappings
                             IMapper mapper = config.CreateMapper();
 
-                            // Map the imported employees to EmployeeViewModel using the specific mapper
-                            //var employeeViewModels = mapper.Map<List<EmployeeViewModel>>(importedEmployees);
-                            var employeeViewModels = GetImportedEmployees();
+                            var employeeViewModels = mapper.Map<List<EmployeeViewModel>>(importedEmployees);
 
-                            // Display a success message and pass the EmployeeViewModels to the view
                             TempData["SuccessMessage"] = $"Import successful! {employeeViewModels} rows processed.";
                             return View("Import", employeeViewModels);
                         }
@@ -78,55 +74,71 @@ namespace TaskApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetImportedEmployees()
-        {
-            try
-            {
-                // Retrieve employees from the database
-                var employees = await _service.GetImportedEmployeesAsync();
-
-                // Map the employees to EmployeeViewModel using AutoMapper
-                var employeeViewModels = _mapper.Map<List<EmployeeViewModel>>(employees);
-
-                // Pass the mapped data to the view
-                return View(employeeViewModels);
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Message = $"Error: {ex.Message}";
-                return View("Import");
-            }
-        }
-
-        [HttpGet]
         [Route("Home/GetEmployeeById")]
         public async Task<IActionResult> GetEmployeeById(int employeeId)
         {
             try
             {
-                // Retrieve the employee by ID from the service
                 var employee = await _service.GetEmployeeByIdAsync(employeeId);
 
                 if (employee != null)
                 {
-                    // Map the employee to an EmployeeViewModel
-                    var employeeViewModel = _mapper.Map<EmployeeViewModel>(employee);
+                    var config = new MapperConfiguration(cfg =>
+                    {
+                        cfg.CreateMap<EmployeeBusiness, EmployeeViewModel>();
+                    });
+
+                    IMapper mapper = config.CreateMapper();
+                    var employeeViewModel = mapper.Map<EmployeeViewModel>(employee);
 
                     return PartialView("EditEmployee", employeeViewModel);
                 }
                 else
                 {
-                    // Handle the case when an employee is not found
                     ViewBag.ErrorMessage = $"Employee with ID {employeeId} not found.";
                     return PartialView("EditEmployee");
                 }
             }
             catch (Exception ex)
             {
-                // Handle the custom NotFoundException and display the error message
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("EditEmployee");
+                return PartialView("Import");
             }
+        }
+
+        [HttpPost]
+        [Route("Home/UpdateEmployee")]
+        public async Task<IActionResult> UpdateEmployee(EmployeeViewModel employeeViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var existingEmployee = await _service.GetEmployeeByIdAsync(employeeViewModel.Id);
+
+                    if (existingEmployee == null)
+                    {
+                        ViewBag.ErrorMessage = $"Employee with ID {employeeViewModel.Id} not found.";
+                        return View("EditEmployee", employeeViewModel);
+                    }
+
+                    // Use AutoMapper to map the updated data from ViewModel to Business Model
+                    _mapper.Map(employeeViewModel, existingEmployee);
+
+                    // Update the employee record in the database
+                    await _service.UpdateEmployeeAsync(existingEmployee);
+
+                    TempData["SuccessMessage"] = "Employee updated successfully!";
+                    return RedirectToAction("Index"); // Redirect to a suitable page after updating
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.ErrorMessage = $"Update failed: {ex.Message}";
+                }
+            }
+
+            // If ModelState is not valid, return to the edit view with validation errors
+            return View("EditEmployee", employeeViewModel);
         }
     }
 }

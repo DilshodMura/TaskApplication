@@ -5,8 +5,9 @@ namespace Domain.Repositories
 {
     public interface IEmployeeRepository
     {
-        Task AddEmployeesAsync(List<IEmployee> employees);
-        Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync();
+        public Task AddEmployeesAsync(List<IEmployee> employees);
+        public Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync(int count);
         public Task<IEmployee> GetEmployeeByIdAsync(int employeeId);
+        public Task UpdateEmployeeAsync(IEmployee updatedEmployee);
     }
 }
