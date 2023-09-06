@@ -9,5 +9,6 @@ namespace Domain.Services
 
         public Task<IEmployee> GetEmployeeByIdAsync(int employeeId);
         public Task UpdateEmployeeAsync(IEmployee employee);
+        public Task<IEnumerable<IEmployee>> GetEmployeesByIdsAsync(List<int> employeeIds);
     }
 }

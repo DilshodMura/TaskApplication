@@ -73,5 +73,11 @@ namespace Service.Services
         {
             await _employeeRepository.UpdateEmployeeAsync(updatedEmployee);
         }
+
+        public async Task<IEnumerable<IEmployee>> GetEmployeesByIdsAsync(List<int> employeeIds)
+        {
+            // Delegate the data retrieval to the repository layer asynchronously
+            return await _employeeRepository.GetEmployeesByIdsAsync(employeeIds);
+        }
     }
 }

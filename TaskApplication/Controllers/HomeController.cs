@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
-using Domain.Models;
 using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using Repository.BusinessModels;
-using Service.ServiceModels;
-using Service.Services;
 using TaskApplication.Models;
 
 namespace TaskApplication.Controllers
@@ -110,35 +107,44 @@ namespace TaskApplication.Controllers
         [Route("Home/UpdateEmployee")]
         public async Task<IActionResult> UpdateEmployee(EmployeeViewModel employeeViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    var existingEmployee = await _service.GetEmployeeByIdAsync(employeeViewModel.Id);
-
-                    if (existingEmployee == null)
-                    {
-                        ViewBag.ErrorMessage = $"Employee with ID {employeeViewModel.Id} not found.";
-                        return View("EditEmployee", employeeViewModel);
-                    }
-
-                    // Use AutoMapper to map the updated data from ViewModel to Business Model
-                    _mapper.Map(employeeViewModel, existingEmployee);
-
-                    // Update the employee record in the database
-                    await _service.UpdateEmployeeAsync(existingEmployee);
-
-                    TempData["SuccessMessage"] = "Employee updated successfully!";
-                    return RedirectToAction("Index"); // Redirect to a suitable page after updating
-                }
-                catch (Exception ex)
-                {
-                    ViewBag.ErrorMessage = $"Update failed: {ex.Message}";
-                }
+                return View("EditEmployee", employeeViewModel);
             }
 
-            // If ModelState is not valid, return to the edit view with validation errors
+            try
+            {
+                var existingEmployee = await _service.GetEmployeeByIdAsync(employeeViewModel.Id);
+
+                if (existingEmployee == null)
+                {
+                    ViewBag.ErrorMessage = $"Employee with ID {employeeViewModel.Id} not found.";
+                    return View("EditEmployee", employeeViewModel);
+                }
+
+                _mapper.Map(employeeViewModel, existingEmployee);
+
+                await _service.UpdateEmployeeAsync(existingEmployee);
+
+                TempData["SuccessMessage"] = "Employee updated successfully!";
+
+                return RedirectToAction("ImportCsv");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Update failed: {ex.Message}";
+            }
+
             return View("EditEmployee", employeeViewModel);
+        }
+
+        [HttpPost]
+        [Route("Home/GetEmployeesByIds")]
+        public IActionResult GetEmployeesByIds([FromBody] List<int> employeeIds)
+        {
+            var employees = _service.GetEmployeesByIdsAsync(employeeIds);
+
+            return PartialView("ImportCsv", employees);
         }
     }
 }

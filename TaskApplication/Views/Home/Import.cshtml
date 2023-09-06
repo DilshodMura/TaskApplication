@@ -26,7 +26,7 @@
     </div>
 }
 
-@if (Model != null && Model.Any())
+@if (Model != null)
 {
     <h3>Imported Employees</h3>
     <p>Total Rows Added: @Model.Count()</p>
@@ -84,8 +84,14 @@
             </div>
             <div class="modal-body">
                 <!-- Form for editing employee data -->
-                <form id="editEmployeeForm" action="SaveEmployeeChanges" method="post">
+                <form id="editEmployeeForm" action="/Home/UpdateEmployee" method="post">
                     <!-- Add form fields for editing employee data here -->
+                    <!-- Example: -->
+                    <div class="form-group">
+                        <label for="editPayrollNumber">Payroll Number:</label>
+                        <input type="text" class="form-control" id="editPayrollNumber" name="PayrollNumber" value="">
+                    </div>
+                    <!-- Repeat for other fields -->
                 </form>
             </div>
         </div>
@@ -98,80 +104,65 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
     <script defer src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
-    <script>
-        var $ = jQuery.noConflict();
-        $(document).ready(function () {
-            // Initialize DataTables
-            var dataTable = $('#employeeTable').DataTable({
-                "paging": false,
-                "ordering": true,
-                "searching": true
-            });
+<script>
+    var $ = jQuery.noConflict();
+    $(document).ready(function () {
+        var employeeTable = $('#employeeTable').DataTable();
 
-            // Event handler for "Edit" buttons
-            $('#employeeTable').on('click', '.edit-employee', function (e) {
-                e.preventDefault(); // Prevent the default link behavior
-                var employeeId = $(this).data('id');
-                openEditModal(employeeId);
-            });
+        // Event handler for "Edit" buttons
+        $('#employeeTable').on('click', '.edit-employee', function (e) {
+            e.preventDefault();
+            var employeeId = $(this).data('id');
+            openEditModal(employeeId);
+        });
 
-            function openEditModal(employeeId) {
-                if (employeeId) {
-                    // Send an AJAX request to retrieve employee data with the employeeId in the URL
-                    $.ajax({
-                        url: `/Home/GetEmployeeById?employeeId=${employeeId}`,
-                        method: 'GET',
-                        success: function (data) {
-                            // Check if the response data contains the form fields or HTML
-                            if (data) {
-                                // Assuming the response contains the entire form HTML, replace the form content
-                                $('#editEmployeeForm').html(data);
-
-                                // Show the modal
-                                $('#editEmployeeModal').modal('show');
-                            } else {
-                                // Handle the case where the response is empty or not as expected
-                                console.error("Invalid response data");
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("Error loading employee data:", error);
-                            alert('Error loading employee data. See console for details.');
-                        }
-                    });
-                } else {
-                    console.error("Invalid employeeId");
-                }
-            }
-
-            // Event handler for saving changes
-            $('#editEmployeeForm').on('submit', function (e) {
-                e.preventDefault(); // Prevent the default form submission
-
-                // Serialize the form data
-                var formData = $(this).serialize();
-
-                // Send an Ajax request to save the changes
+        //Opening Edit modal
+        function openEditModal(employeeId) {
+            if (employeeId) {
                 $.ajax({
-                    url: '/Home/UpdateEmployee',
-                    method: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        if (response.success) {
-                            // Close the modal and update the table if the save was successful
-                            $('#editEmployeeModal').modal('hide');
-                            // You may also want to refresh the employee table here
+                    url: `/Home/GetEmployeeById?employeeId=${employeeId}`,
+                    method: 'GET',
+                    success: function (data) {
+                        if (data) {
+                            $('#editEmployeeForm').html(data);
+                            $('#editEmployeeModal').modal('show');
                         } else {
-                            // Handle errors or display error messages
-                            console.error(response.message);
+                            console.error("Invalid response data");
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error(xhr.responseText);
-                        alert('Error saving employee changes. See console for details.');
+                        console.error("Error loading employee data:", error);
+                        alert('Error loading employee data. See console for details.');
                     }
                 });
+            } else {
+                console.error("Invalid employeeId");
+            }
+        }
+        //Save changes click function
+        $('#saveChangesButton').on('click', function (e) {
+            e.preventDefault();
+
+            var formData = $('#editEmployeeForm').serialize();
+
+            $.ajax({
+                url: '/Home/UpdateEmployee',
+                method: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+
+                        $('#editEmployeeModal').modal('hide');
+                    } else {
+                        console.error(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert('Error saving employee changes. See console for details.');
+                }
             });
         });
-    </script>
+    });
+</script>
 }

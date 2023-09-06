@@ -9,5 +9,6 @@ namespace Domain.Repositories
         public Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync(int count);
         public Task<IEmployee> GetEmployeeByIdAsync(int employeeId);
         public Task UpdateEmployeeAsync(IEmployee updatedEmployee);
+        public Task<IEnumerable<IEmployee>> GetEmployeesByIdsAsync(List<int> employeeIds);
     }
 }

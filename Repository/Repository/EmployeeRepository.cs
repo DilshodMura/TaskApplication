@@ -47,17 +47,42 @@ namespace Repository.Repository
         }
         public async Task UpdateEmployeeAsync(IEmployee updatedEmployee)
         {
-            // Instead of creating a new instance, work with the existing tracked entity
-            var entry = _dbContext.Entry(updatedEmployee);
+            // First, check if the employee with the given ID exists in the database
+            var existingEmployee = await _dbContext.Employees.FindAsync(updatedEmployee.Id);
 
-            if (entry.State == EntityState.Detached)
+            if (existingEmployee == null)
             {
-                // This condition should not be necessary, but you can keep it for extra safety
-                _dbContext.Attach(updatedEmployee);
+                throw new Exception($"Employee with ID {updatedEmployee.Id} not found.");
             }
 
-            // The entity is already tracked, so there's no need to update it explicitly
+            // Use AutoMapper to map the updated data from the updatedEmployee to the existingEmployee
+            _mapper.Map(updatedEmployee, existingEmployee);
+
+            // Save changes to the database
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<IEmployee>> GetEmployeesByIdsAsync(List<int> employeeIds)
+        {
+            // Query the database to retrieve employees by their IDs asynchronously
+            return await _dbContext.Employees
+                .Where(e => employeeIds.Contains(e.Id))
+                .Select(e => new EmployeeBusiness
+                {
+                    Id = e.Id,
+                    Payroll_Number = e.Payroll_Number,
+                    Forenames = e.Forenames,
+                    Surname = e.Surname,
+                    EMail_Home = e.EMail_Home,
+                    Postcode = e.Postcode,
+                    Address = e.Address,
+                    Address_2 = e.Address_2,
+                    Date_of_Birth = e.Date_of_Birth,
+                    Start_Date = e.Start_Date,
+                    Mobile = e.Mobile,
+                    Telephone = e.Telephone
+                })
+                .ToListAsync();
         }
     }
 }
