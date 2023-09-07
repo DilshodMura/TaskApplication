@@ -26,6 +26,7 @@ var mapperConfig = new MapperConfiguration(config =>
 {
     config.AddProfile<MappingProfile>();
     config.CreateMap<EmployeeViewModel, EmployeeBusiness>();
+    config.CreateMap<EmployeeBusiness, EmployeeViewModel>();
 });
 
 var mapper = mapperConfig.CreateMapper();

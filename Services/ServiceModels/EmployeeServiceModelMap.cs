@@ -4,6 +4,9 @@ namespace Service.ServiceModels
 {
     public class EmployeeServiceModelMap : ClassMap<EmployeeServiceModel>
     {
+        /// <summary>
+        /// Mapping configuration in order to match the file dataset.
+        /// </summary>
         public EmployeeServiceModelMap()
         {
             Map(m => m.Payroll_Number).Name("Personnel_Records.Payroll_Number");

@@ -10,6 +10,7 @@ namespace Repository.Mapping_Profile
     {
         public MappingProfile()
         {
+            //Mapping profile for mapping between objects
             CreateMap<IEmployee, EmployeeDb>();
             CreateMap<EmployeeDb, EmployeeBusiness>();
             CreateMap<EmployeeServiceModel, EmployeeBusiness>();

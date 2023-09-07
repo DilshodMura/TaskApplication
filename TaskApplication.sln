@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskApplication", "TaskApplication\TaskApplication.csproj", "{9482C18F-CA66-4B19-946F-1917D7E23765}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskApplication", "TaskApplication\TaskApplication.csproj", "{9482C18F-CA66-4B19-946F-1917D7E23765}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{10AB87C1-1F85-4A77-B346-89E9C848E20E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Database\Database.csproj", "{10AB87C1-1F85-4A77-B346-89E9C848E20E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{C4B7D772-5772-4745-B85B-F5A8732163D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{C4B7D772-5772-4745-B85B-F5A8732163D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Services\Service.csproj", "{EF76221D-FC23-4F31-84BA-B9F076B59A8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Services\Service.csproj", "{EF76221D-FC23-4F31-84BA-B9F076B59A8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{D8E8431F-EB68-4468-8F44-63BC2C2BB666}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{D8E8431F-EB68-4468-8F44-63BC2C2BB666}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskApplication.Test", "TaskApplication.Test\TaskApplication.Test.csproj", "{414F7A23-21FA-4F5A-A27A-BBDBC952F3EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{D8E8431F-EB68-4468-8F44-63BC2C2BB666}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8E8431F-EB68-4468-8F44-63BC2C2BB666}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8E8431F-EB68-4468-8F44-63BC2C2BB666}.Release|Any CPU.Build.0 = Release|Any CPU
+		{414F7A23-21FA-4F5A-A27A-BBDBC952F3EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{414F7A23-21FA-4F5A-A27A-BBDBC952F3EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{414F7A23-21FA-4F5A-A27A-BBDBC952F3EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{414F7A23-21FA-4F5A-A27A-BBDBC952F3EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

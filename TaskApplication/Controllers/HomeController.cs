@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
-using Repository.BusinessModels;
 using TaskApplication.Models;
 
 namespace TaskApplication.Controllers
@@ -27,6 +26,9 @@ namespace TaskApplication.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Import end point.
+        /// </summary>
         public async Task<IActionResult> ImportCsv(IFormFile file)
         {
             if (file != null && file.Length > 0)
@@ -39,14 +41,8 @@ namespace TaskApplication.Controllers
 
                         if (importedEmployees.Any())
                         {
-                            var config = new MapperConfiguration(cfg =>
-                            {
-                                cfg.CreateMap<EmployeeBusiness, EmployeeViewModel>();
-                            });
 
-                            IMapper mapper = config.CreateMapper();
-
-                            var employeeViewModels = mapper.Map<List<EmployeeViewModel>>(importedEmployees);
+                            var employeeViewModels = _mapper.Map<List<EmployeeViewModel>>(importedEmployees);
 
                             TempData["SuccessMessage"] = $"Import successful! {employeeViewModels} rows processed.";
                             return View("Import", employeeViewModels);
@@ -70,6 +66,9 @@ namespace TaskApplication.Controllers
             return View("Import");
         }
 
+        /// <summary>
+        /// Get employee by id endpoint.
+        /// </summary>
         [HttpGet]
         [Route("Home/GetEmployeeById")]
         public async Task<IActionResult> GetEmployeeById(int employeeId)
@@ -80,13 +79,7 @@ namespace TaskApplication.Controllers
 
                 if (employee != null)
                 {
-                    var config = new MapperConfiguration(cfg =>
-                    {
-                        cfg.CreateMap<EmployeeBusiness, EmployeeViewModel>();
-                    });
-
-                    IMapper mapper = config.CreateMapper();
-                    var employeeViewModel = mapper.Map<EmployeeViewModel>(employee);
+                    var employeeViewModel = _mapper.Map<EmployeeViewModel>(employee);
 
                     return PartialView("EditEmployee", employeeViewModel);
                 }
@@ -99,10 +92,13 @@ namespace TaskApplication.Controllers
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return PartialView("Import");
+                return PartialView("Error");
             }
         }
 
+        /// <summary>
+        /// Update employee end point.
+        /// </summary>
         [HttpPost]
         [Route("Home/UpdateEmployee")]
         public async Task<IActionResult> UpdateEmployee(EmployeeViewModel employeeViewModel)
@@ -138,13 +134,5 @@ namespace TaskApplication.Controllers
             return View("EditEmployee", employeeViewModel);
         }
 
-        [HttpPost]
-        [Route("Home/GetEmployeesByIds")]
-        public IActionResult GetEmployeesByIds([FromBody] List<int> employeeIds)
-        {
-            var employees = _service.GetEmployeesByIdsAsync(employeeIds);
-
-            return PartialView("ImportCsv", employees);
-        }
     }
 }

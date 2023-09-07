@@ -4,11 +4,19 @@ namespace Domain.Services
 {
     public interface IEmployeeService
     {
+        /// <summary>
+        /// Import employee from csv file
+        /// </summary>
         public Task<IEnumerable<IEmployee>> ImportEmployeesFromCsvAsync(Stream stream);
-        public Task<IEnumerable<IEmployee>> GetImportedEmployeesAsync(int count);
 
+        /// <summary>
+        /// Get employee by id
+        /// </summary>
         public Task<IEmployee> GetEmployeeByIdAsync(int employeeId);
+
+        /// <summary>
+        /// Update Employee
+        /// </summary>
         public Task UpdateEmployeeAsync(IEmployee employee);
-        public Task<IEnumerable<IEmployee>> GetEmployeesByIdsAsync(List<int> employeeIds);
     }
 }
